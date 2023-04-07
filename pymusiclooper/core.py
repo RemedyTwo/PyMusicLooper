@@ -8,6 +8,8 @@ import time
 import librosa
 import numpy as np
 import soundfile
+import shutil
+import taglib
 
 from .exceptions import LoopNotFoundError, AudioLoadError
 
@@ -361,6 +363,20 @@ class MusicLooper:
         loop_end = int(self.frames_to_samples(loop_end))
         print(loop_start, loop_end)
 
+    def export_metadata(self, loop_start, loop_end, loop_start_tag, loop_end_tag, format="WAV", output_dir=None):
+        if output_dir is not None:
+            out_path = os.path.join(output_dir, self.filename)
+        else:
+            out_path = os.path.abspath(self.filepath)
+
+        out_path += "-metadata." + format.lower()
+        loop_start = self.frames_to_samples(loop_start)
+        loop_end = self.frames_to_samples(loop_end)
+        shutil.copyfile(self.filepath, out_path)
+        with taglib.File(out_path, save_on_exit=True) as song:
+            song.tags[loop_start_tag] = [str(loop_start)]
+            song.tags[loop_end_tag] = [str(loop_end)]
+        print("Saved loop start in {} and loop end in {} as metadata to {}".format(loop_start_tag, loop_end_tag, out_path))
 
 def _geometric_weights(length, start=100, stop=1):
     return np.geomspace(start, stop, num=length)

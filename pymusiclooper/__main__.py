@@ -140,6 +140,10 @@ def cli_main():
                 logging.info(message)
             else:
                 print(message)
+        if args.metadata is not None:
+            start_tagname = args.metadata[0]
+            end_tagname = args.metadata[1]
+            track.export_metadata(loop_start, loop_end, start_tagname, end_tagname, output_dir=output_directory)
         if args.export:
             track.export(
                 loop_start,
@@ -229,7 +233,7 @@ def cli_main():
 
                     processes = []
 
-    if args.export or args.txt or args.stdout:
+    if args.export or args.txt or args.stdout or args.metadata:
         if not os.path.exists(output_dir) and not args.stdout:
             os.mkdir(output_dir)
 
@@ -238,7 +242,7 @@ def cli_main():
         else:
             batch_handler(args.path)
 
-    if args.play and not (args.export or args.txt or args.stdout):
+    if args.play and not (args.export or args.txt or args.stdout or args.metadata):
         try:
             loop_pair_list = loop_pairs(args.path, args.min_duration_multiplier)
 

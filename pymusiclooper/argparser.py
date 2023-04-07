@@ -53,6 +53,12 @@ class ArgParser(ArgumentParser):
             default=False,
             help="print the loop points of a track in samples to stdout (Standard Output)",
         )
+        export_options.add_argument(
+            "-me",
+            "--metadata",
+            nargs=2,
+            help="store the loop points of the track as tags"
+        )
         batch_options.add_argument(
             "-r",
             "--recursive",
